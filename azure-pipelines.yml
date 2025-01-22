@@ -1,0 +1,35 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+trigger:
+ branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  S3_BUCKET_NAME: 'reto-front-amplify'  # Cambia por el nombre de tu bucket
+  AWS_REGION: 'us-west-1'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '20.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run build
+  displayName: 'npm install and build'
+
+- task: AWSCLI@1
+  inputs:
+    awsCredentials: 'aws-conection'  # Nombre de la conexión de servicio AWS configurada en Azure DevOps
+    regionName: $(AWS_REGION)
+    command: 's3'
+    arguments: 'sync ./dist s3://$(S3_BUCKET_NAME) --delete'  
+  displayName: 'Desplegar archivos en Amazon S3'
