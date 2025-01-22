@@ -1,0 +1,18 @@
+.btn {
+    display: block;
+    width: 150px;
+    border: 0;
+    border-radius: 15px;
+    padding: 10px 13px;
+    cursor: pointer;
+
+    &.disabled {
+        background-color: #919191;
+        color: #cac9c9;
+    }
+
+    &.active {
+        background-color: #3d74b7;
+        color: #fff;
+    }
+}

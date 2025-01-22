@@ -1,0 +1,15 @@
+.input {
+    width: 200px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    padding: 7px 10px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+    color: #030303;
+    font-family: "Poppins", serif;
+
+    &:focus {
+        outline-color: #8593db; /* Elimina el contorno por defecto del navegador */
+    }
+}
+
