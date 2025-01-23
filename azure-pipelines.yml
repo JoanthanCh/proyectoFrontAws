@@ -63,6 +63,12 @@ steps:
     versionSpec: '22.x'
   displayName: 'Instalar Node.js'
 
+- task: UsePythonVersion@0
+  inputs:
+    versionSpec: '3.x'
+    addToPath: true
+  displayName: 'Configurar Python'
+
 - script: |
     npm install
   displayName: 'Instalar dependencias'
