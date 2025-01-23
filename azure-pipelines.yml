@@ -18,7 +18,20 @@ variables:
 steps:
 - task: NodeTool@0
   inputs:
-    versionSpec: '20.x'
+    versionSpec: '22.x'
+- task: AWSCLI@1
+  inputs:
+    awsCredentials: 'aws-conection'
+    regionName: 'us-west-1'
+    awsCommand: 's3'
+- task: S3Upload@1
+  inputs:
+    awsCredentials: 'aws-conection'
+    regionName: 'us-west-1'
+    bucketName: 'reto-front-amplify'
+    sourceFolder: '$(System.DefaultWorkingDirectory)/resources/s3'
+    globExpressions: '**'
+    createBucket: true
   displayName: 'Install Node.js'
 
 - script: |
@@ -26,10 +39,3 @@ steps:
     npm run build
   displayName: 'npm install and build'
 
-- task: AWSCLI@1
-  inputs:
-    awsCredentials: 'aws-conection'  # Nombre de la conexión de servicio AWS configurada en Azure DevOps
-    regionName: $(AWS_REGION)
-    command: 's3'
-    arguments: 'sync ./dist s3://$(S3_BUCKET_NAME) --delete'  
-  displayName: 'Desplegar archivos en Amazon S3'
