@@ -72,13 +72,10 @@ steps:
   displayName: 'Compilar proyecto'
 
 - script: |
-    aws configure set aws_access_key_id $(AWS_ACCESS_KEY_ID)
-    aws configure set aws_secret_access_key $(AWS_SECRET_ACCESS_KEY)
-    aws configure set default.region $(AWS_REGION)
-    
-    aws s3 ls
+    Invoke-WebRequest -Uri "https://awscli.amazonaws.com/AWSCLIV2.msi" -OutFile "AWSCLIV2.msi"
+    Start-Process msiexec.exe -ArgumentList '/i AWSCLIV2.msi /quiet /norestart' -NoNewWindow -Wait
+    aws --version
   displayName: 'Instalar AWS CLI'
-  powershell: true
 
 - script: |
     aws s3 sync ./dist s3://$(AWS_BUCKET_NAME) --region $(AWS_REGION) --delete
