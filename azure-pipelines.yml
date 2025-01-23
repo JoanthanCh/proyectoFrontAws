@@ -1,41 +1,83 @@
-# Node.js
-# Build a general Node.js project with npm.
+# # Node.js
+# # Build a general Node.js project with npm.
+# # Add steps that analyze code, save build artifacts, deploy, and more:
+# # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+
+# trigger:
+#  branches:
+#     include:
+#       - main
+
+# pool:
+#   vmImage: ubuntu-latest
+
+# variables:
+#   S3_BUCKET_NAME: 'reto-front-amplify' 
+#   AWS_REGION: 'us-west-1'
+
+# steps:
+# - task: NodeTool@0
+#   inputs:
+#     versionSpec: '22.x'
+# - task: AWSCLI@1
+#   inputs:
+#     awsCredentials: 'aws-conection'
+#     regionName: 'us-west-1'
+#     awsCommand: 's3'
+# - task: S3Upload@1
+#   inputs:
+#     awsCredentials: 'aws-conection'
+#     regionName: 'us-west-1'
+#     bucketName: 'reto-front-amplify'
+#     sourceFolder: '$(System.DefaultWorkingDirectory)/resources/s3'
+#     globExpressions: '**'
+#     createBucket: true
+#   displayName: 'Install Node.js'
+
+# - script: |
+#     npm install
+#     npm run build
+#   displayName: 'npm install and build'
+
+
+# Node.js with React
+# Build a Node.js project that uses React.
 # Add steps that analyze code, save build artifacts, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
- branches:
-    include:
-      - main
-
-pool:
-  vmImage: ubuntu-latest
-
-variables:
-  S3_BUCKET_NAME: 'reto-front-amplify'  # Cambia por el nombre de tu bucket
-  AWS_REGION: 'us-west-1'
-
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '22.x'
-- task: AWSCLI@1
-  inputs:
-    awsCredentials: 'aws-conection'
-    regionName: 'us-west-1'
-    awsCommand: 's3'
-- task: S3Upload@1
-  inputs:
-    awsCredentials: 'aws-conection'
-    regionName: 'us-west-1'
-    bucketName: 'reto-front-amplify'
-    sourceFolder: '$(System.DefaultWorkingDirectory)/resources/s3'
-    globExpressions: '**'
-    createBucket: true
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
-
+  - main
+  
+  pool:
+    name: 'Default'
+    demands:
+      - agent.name -equals JONATHAN-CHACON
+    #vmImage: ubuntu-latest
+  
+  variables:
+  - group: 'variables_pipeline'
+  
+  steps:
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '22.x'
+    displayName: 'Instalar Node.js'
+  
+  - script: |
+      npm install
+    displayName: 'Instalar dependencias'
+  
+  - script: |
+      npm run build
+    displayName: 'Compilar proyecto'
+  
+  - script: |
+      pip install awscli
+    displayName: 'Instalar AWS CLI'
+  
+  - script: |
+      aws s3 sync ./dist s3://$(AWS_BUCKET_NAME) --region $(AWS_REGION) --delete
+    env:
+      AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+      AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+    displayName: 'Subir archivos a S3'
