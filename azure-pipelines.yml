@@ -72,7 +72,7 @@ steps:
   displayName: 'Compilar proyecto'
 
 - script: |
-    pip install awscli
+    npm install awscli
   displayName: 'Instalar AWS CLI'
 
 - script: |
