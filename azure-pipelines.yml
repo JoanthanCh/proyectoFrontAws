@@ -46,38 +46,38 @@
 # https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
 
 trigger:
-  - main
+- main
   
-  pool:
-    name: 'Default'
-    demands:
-      - agent.name -equals JONATHAN-CHACON
-    #vmImage: ubuntu-latest
-  
-  variables:
-  - group: 'variables_pipeline'
-  
-  steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '22.x'
-    displayName: 'Instalar Node.js'
-  
-  - script: |
-      npm install
-    displayName: 'Instalar dependencias'
-  
-  - script: |
-      npm run build
-    displayName: 'Compilar proyecto'
-  
-  - script: |
-      pip install awscli
-    displayName: 'Instalar AWS CLI'
-  
-  - script: |
-      aws s3 sync ./dist s3://$(AWS_BUCKET_NAME) --region $(AWS_REGION) --delete
-    env:
-      AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
-      AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
-    displayName: 'Subir archivos a S3'
+pool:
+  name: 'Default'
+  demands:
+    - agent.name -equals JONATHAN-CHACON
+  #vmImage: ubuntu-latest
+
+variables:
+- group: 'variables_pipeline'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '22.x'
+  displayName: 'Instalar Node.js'
+
+- script: |
+    npm install
+  displayName: 'Instalar dependencias'
+
+- script: |
+    npm run build
+  displayName: 'Compilar proyecto'
+
+- script: |
+    pip install awscli
+  displayName: 'Instalar AWS CLI'
+
+- script: |
+    aws s3 sync ./dist s3://$(AWS_BUCKET_NAME) --region $(AWS_REGION) --delete
+  env:
+    AWS_ACCESS_KEY_ID: $(AWS_ACCESS_KEY_ID)
+    AWS_SECRET_ACCESS_KEY: $(AWS_SECRET_ACCESS_KEY)
+  displayName: 'Subir archivos a S3'
